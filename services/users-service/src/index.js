@@ -59,6 +59,34 @@ app.get('/:id', (req, res) => {
   res.json(user);
 });
 
+// - Implementação de:  `user.updated`.
+app.put('/:id', async (req, res) => { // ns
+  const { id } = req.params; // ns
+  const { name, email } = req.body || {}; // ns
+
+  const user = users.get(id); // ns
+  if (!user) return res.status(404).json({ error: 'Usuário não encontrado' }); // ns
+
+  user.name = name || user.name; // ns
+  user.email = email || user.email; // ns
+  user.updatedAt = new Date().toISOString(); // ns
+  users.set(id, user); // ns
+
+  try { // ns
+    if (amqp?.ch) { // ns
+      const payload = Buffer.from(JSON.stringify({ id, name: user.name, email: user.email })); // ns
+      amqp.ch.publish(EXCHANGE, ROUTING_KEYS.USER_UPDATED, payload, { persistent: true }); // ns
+      console.log('[users] published event:', ROUTING_KEYS.USER_UPDATED, { id, name: user.name, email: user.email }); // ns
+    } // ns
+  } catch (err) { // ns
+    console.error('[users] publish error:', err.message); // ns
+  } // ns
+
+  res.json(user); // ns
+}); // ns
+
+
+
 app.listen(PORT, () => {
   console.log(`[users] listening on http://localhost:${PORT}`);
 });
