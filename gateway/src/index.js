@@ -35,12 +35,12 @@ app.use('/users', createProxyMiddleware({
   target: USERS_URL,
   changeOrigin: true,
   pathRewrite: {'^/users': ''},
-  onProxyReq: (proxyReq, req, res) => {  //
-    console.log(`[gateway] Proxying para USERS: ${req.method} ${req.url}`);  //
+  onProxyReq: (proxyReq, req, res) => {  // nl 
+    console.log(`[gateway] Proxying para USERS: ${req.method} ${req.url}`);  // nl
   },
-  onError: (err, req, res) => {  //
-    console.error('[gateway] Erro no proxy USERS:', err.message);  //
-    res.status(500).json({ error: 'Erro ao redirecionar para Users Service' });  //
+  onError: (err, req, res) => {  // nl
+    console.error('[gateway] Erro no proxy USERS:', err.message);  // nl
+    res.status(500).json({ error: 'Erro ao redirecionar para Users Service' });  // nl
   }
 }));
 
@@ -50,12 +50,12 @@ app.use('/orders', createProxyMiddleware({
   target: ORDERS_URL,
   changeOrigin: true,
   pathRewrite: {'^/orders': ''},
-  onProxyReq: (proxyReq, req, res) => {  //
-    console.log(`[gateway] Proxying para ORDERS: ${req.method} ${req.url}`);  //
-  },
-  onError: (err, req, res) => {  //
-    console.error('[gateway] Erro no proxy ORDERS:', err.message);  //
-    res.status(500).json({ error: 'Erro ao redirecionar para Orders Service' });  //
+  onProxyReq: (proxyReq, req, res) => {  // nl
+    console.log(`[gateway] Proxying para ORDERS: ${req.method} ${req.url}`);  // nl
+  }, 
+  onError: (err, req, res) => {  // nl
+    console.error('[gateway] Erro no proxy ORDERS:', err.message);  // nl
+    res.status(500).json({ error: 'Erro ao redirecionar para Orders Service' });  // nl
   }
 }));
 app.use(express.json());  // colocando para baixo para pode ir 

@@ -102,6 +102,29 @@ app.post('/', async (req, res) => {
   res.status(201).json(order);
 });
 
+// Implementação de `order.cancelled` 
+app.post('/orders/:id/cancel', async (req, res) => { // nl
+  const { id } = req.params; // nl
+  const order = orders.get(id); // nl
+  if (!order) return res.status(404).json({ error: 'Pedido não encontrado' }); // nl
+  if (order.status === 'cancelled') return res.status(400).json({ error: 'Pedido já cancelado' }); // nl
+
+  order.status = 'cancelled'; // nl
+  order.cancelledAt = new Date().toISOString(); // nl
+  orders.set(id, order); // nl
+
+  try { // nl
+    if (amqp?.ch) { // nl
+      amqp.ch.publish(EXCHANGE, ROUTING_KEYS.ORDER_CANCELLED, Buffer.from(JSON.stringify(order)), { persistent: true }); // nl
+      console.log('[orders] published event:', ROUTING_KEYS.ORDER_CANCELLED, order.id); // nl
+    } // nl
+  } catch (err) { // nl
+    console.error('[orders] publish error:', err.message); // nl
+  } // nl
+
+  res.json(order); // nl
+}); // nl
+
 app.listen(PORT, () => {
   console.log(`[orders] listening on http://localhost:${PORT}`);
   console.log(`[orders] users base url: ${USERS_BASE_URL}`);
