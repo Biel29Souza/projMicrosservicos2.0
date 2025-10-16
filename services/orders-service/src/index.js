@@ -103,7 +103,7 @@ app.post('/', async (req, res) => {
 });
 
 // Implementação de `order.cancelled` 
-app.post('/orders/:id/cancel', async (req, res) => { // nl
+app.delete('/:id/cancel', async (req, res) => { // nl
   const { id } = req.params; // nl
   const order = orders.get(id); // nl
   if (!order) return res.status(404).json({ error: 'Pedido não encontrado' }); // nl
