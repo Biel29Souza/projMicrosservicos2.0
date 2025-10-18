@@ -9,6 +9,21 @@ services:
       RABBITMQ_DEFAULT_USER: guest
       RABBITMQ_DEFAULT_PASS: guest
 
+
+  postgres: # nl
+    image: postgres:15 # nl
+    container_name: ms_postgres # nl
+    restart: always # nl
+    environment: # nl
+      POSTGRES_USER: postgres # nl
+      POSTGRES_PASSWORD: postgres # nl
+      POSTGRES_DB: ordersdb # nl
+    ports: # nl
+      - "5432:5432" # nl
+    volumes: # nl
+      - pgdata:/var/lib/postgresql/data # nl    
+
+
   users:
     build:
       context: .                     # << agora é a raiz do projeto
@@ -36,9 +51,11 @@ services:
       EXCHANGE: app.topic
       QUEUE: orders.q
       ROUTING_KEY_USER_CREATED: user.created
+      DATABASE_URL: postgres://postgres:postgres@postgres:5432/ordersdb  # nl
     depends_on:
       - rabbitmq
       - users
+      - postgres # nl
     ports:
       - "3002:3002"
 
@@ -56,3 +73,8 @@ services:
       - orders
     ports:
       - "3000:3000"
+
+volumes: # nl
+  pgdata: # nl
+
+

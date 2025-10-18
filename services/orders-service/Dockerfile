@@ -5,6 +5,7 @@ COPY services/orders-service/package.json ./package.json
 RUN npm install --only=production
 
 COPY services/orders-service/src ./src
+COPY services/orders-service/prisma ./prisma 
 COPY common ./common
 
 ENV PORT=3002
